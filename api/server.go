@@ -1,63 +1,64 @@
 package main
 
-import (
-	"context"
-	"errors"
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
-	"skill/database"
-	"skill/route"
-	"skill/skill"
-	"syscall"
-	"time"
-	// "github.com/IBM/sarama"
-)
+import "os"
+
+// "context"
+// "errors"
+// "fmt"
+// "log"
+// "net/http"
+// "os"
+// "os/signal"
+// "skill/database"
+// router "skill/route"
+// "skill/skill"
+// "syscall"
+// "time"
+// "github.com/IBM/sarama"
 
 func main() {
-	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer cancel()
+	print(os.Getenv("PORT"))
+	print("a")
+	// ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	// defer cancel()
 
-	db := database.Connect()
-	defer db.Close()
-	
-	storage := skill.NewSkillStorage(db)
-	pd := skill.NewProducer()
-	pd.Publish("Define-Topic", "aha")
-	
-	skillHandler := skill.NewSkillHandler(storage)
+	// db := database.Connect()
+	// defer db.Close()
 
-	r := router.NewRouter(skillHandler)
+	// storage := skill.NewSkillStorage(db)
+	// pd := skill.NewProducer()
 
-	srv := http.Server{
-		Addr:    ":" + os.Getenv("PORT"),
-		Handler: r,
-	}
+	// skillHandler := skill.NewSkillHandler(storage, *pd)
 
-	closeChan := make(chan struct{})
+	// r := router.NewRouter(skillHandler)
 
-	go func() {
-		<-ctx.Done()
-		fmt.Println("shutting down...")
+	// srv := http.Server{
+	// 	Addr:    ":" + os.Getenv("PORT"),
+	// 	Handler: r,
+	// }
 
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
+	// closeChan := make(chan struct{})
 
-		if err := srv.Shutdown(ctx); err != nil {
-			if !errors.Is(err, http.ErrServerClosed) {
-				log.Println(err)
-			}
-		}
+	// go func() {
+	// 	<-ctx.Done()
+	// 	fmt.Println("shutting down...")
 
-		close(closeChan)
-	}()
+	// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// 	defer cancel()
 
-	if err := srv.ListenAndServe(); err != nil {
-		log.Println(err)
-	}
+	// 	if err := srv.Shutdown(ctx); err != nil {
+	// 		if !errors.Is(err, http.ErrServerClosed) {
+	// 			log.Println(err)
+	// 		}
+	// 	}
 
-	<-closeChan
+	// 	close(closeChan)
+	// }()
+
+	// if err := srv.ListenAndServe(); err != nil {
+	// 	log.Println(err)
+	// }
+
+	// <-closeChan
 
 }

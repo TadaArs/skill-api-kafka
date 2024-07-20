@@ -1,4 +1,3 @@
-version: '3.7'
 services:
 
   database:
@@ -63,7 +62,7 @@ services:
       - zookeeper
 
   kafka-ui:
-    container_name: kafka-cluster-ui-skill
+    container_name: kafka-cluster-ui
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8080:8080

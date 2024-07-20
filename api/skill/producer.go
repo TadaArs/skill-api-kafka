@@ -6,12 +6,9 @@ import (
 	"github.com/IBM/sarama"
 )
 
-
-
 type Producer struct {
 	producer sarama.SyncProducer
 }
-
 
 func NewProducer() *Producer {
 	config := sarama.NewConfig()
@@ -24,16 +21,11 @@ func NewProducer() *Producer {
 	return &Producer{producer: producer}
 }
 
-func (p *Producer) Publish(topic string, msg string) error {
-	
-	bytemsg := &sarama.ProducerMessage{Topic: topic, Value: sarama.ByteEncoder(msg)}
+func (p *Producer) Publish(topic string, msg []byte) error {
+	bytemsg := &sarama.ProducerMessage{Topic: topic, Value: sarama.ByteEncoder(string(msg))}
 	_, _, err := p.producer.SendMessage(bytemsg)
 	if err != nil {
 		return err
-	} 
+	}
 	return nil
 }
-
-
-
-
