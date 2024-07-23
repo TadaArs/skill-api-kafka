@@ -2,6 +2,7 @@ package skill
 
 import (
 	"log"
+	"os"
 
 	"github.com/IBM/sarama"
 )
@@ -14,7 +15,7 @@ func NewProducer() *Producer {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Return.Successes = true
-	producer, err := sarama.NewSyncProducer([]string{"localhost:9092", "localhost:9093", "localhost:9094"}, config)
+	producer, err := sarama.NewSyncProducer([]string{os.Getenv("PRODUCER_BROKERS")}, config)
 	if err != nil {
 		log.Fatalln(err)
 	}

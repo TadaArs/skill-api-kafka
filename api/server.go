@@ -1,64 +1,61 @@
 package main
 
-import "os"
-
-// "context"
-// "errors"
-// "fmt"
-// "log"
-// "net/http"
-// "os"
-// "os/signal"
-// "skill/database"
-// router "skill/route"
-// "skill/skill"
-// "syscall"
-// "time"
-// "github.com/IBM/sarama"
+import (
+	"context"
+	"errors"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"skill/database"
+	router "skill/route"
+	"skill/skill"
+	"syscall"
+	"time"
+)
 
 func main() {
-	print(os.Getenv("PORT"))
-	print("a")
-	// ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	// defer cancel()
 
-	// db := database.Connect()
-	// defer db.Close()
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer cancel()
 
-	// storage := skill.NewSkillStorage(db)
-	// pd := skill.NewProducer()
+	db := database.Connect()
+	defer db.Close()
 
-	// skillHandler := skill.NewSkillHandler(storage, *pd)
+	storage := skill.NewSkillStorage(db)
+	pd := skill.NewProducer()
+	skillHandler := skill.NewSkillHandler(storage, *pd)
 
-	// r := router.NewRouter(skillHandler)
+	r := router.NewRouter(skillHandler)
 
-	// srv := http.Server{
-	// 	Addr:    ":" + os.Getenv("PORT"),
-	// 	Handler: r,
-	// }
+	srv := http.Server{
+		Addr:    ":" + os.Getenv("PORT"),
+		Handler: r,
+	}
 
-	// closeChan := make(chan struct{})
+	closeChan := make(chan struct{})
 
-	// go func() {
-	// 	<-ctx.Done()
-	// 	fmt.Println("shutting down...")
+	go func() {
+		<-ctx.Done()
+		fmt.Println("shutting down...")
 
-	// 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// 	defer cancel()
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
 
-	// 	if err := srv.Shutdown(ctx); err != nil {
-	// 		if !errors.Is(err, http.ErrServerClosed) {
-	// 			log.Println(err)
-	// 		}
-	// 	}
+		if err := srv.Shutdown(ctx); err != nil {
+			if !errors.Is(err, http.ErrServerClosed) {
+				log.Println(err)
+			}
+		}
 
-	// 	close(closeChan)
-	// }()
+		close(closeChan)
+	}()
 
-	// if err := srv.ListenAndServe(); err != nil {
-	// 	log.Println(err)
-	// }
+	if err := srv.ListenAndServe(); err != nil {
+		log.Println(err)
+	}
 
-	// <-closeChan
+	<-closeChan
 
 }
