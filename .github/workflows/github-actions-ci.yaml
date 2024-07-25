@@ -21,7 +21,7 @@ jobs:
       - name: package api init go module
         run: cd api && go mod tidy
       - name: login docker
-        run: cd .. && docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
+        run: cd .. && docker compose up -d && docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
       - name: push image to registry
         run: docker push ${{ env.REGISTRY }}/${{secrets.USER}}/${{env.IMAGE_NAME}}
       
