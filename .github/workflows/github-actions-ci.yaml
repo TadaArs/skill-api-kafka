@@ -23,7 +23,7 @@ jobs:
       - name: login docker
         run: cd .. && docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
       - name: push image to registry
-        run: docker push ${{ env.REGISTRY }}/${{ secrets.USER }}/${{env.IMAGE_NAME}}
+        run: docker push ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}
       
         
     
