@@ -26,8 +26,8 @@ jobs:
         run: docker compose up -d
       - name: login docker
         run: docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
-    #   - name: push image to registry
-    #     run: docker push ${{ env.REGISTRY }}/${{secrets.USER}}/${{env.IMAGE_NAME}}
+      - name: push image to registry
+        run: docker push ${{ env.REGISTRY }}/${{secrets.USER}}/${{env.IMAGE_NAME}}
       
         
     
