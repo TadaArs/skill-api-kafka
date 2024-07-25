@@ -8,18 +8,19 @@ type Skill struct {
 	Tags []string `json:"tags" default:"{}"`
 }
 
-type SkillCreateRequest struct {
-	Key string `json:"key"`
+type NameUpdateRequest struct {
 	Name string `json:"name"`
-	Description string `json:"description"`
-	Logo string `json:"logo"`
-	Tags []string `json:"tags"`
 }
 
-type SkillUpdateRequest struct {
-	Name string `json:"name"`
+type DescriptionUpdateRequest struct {
 	Description string `json:"description"`
+}
+
+type LogoUpdateRequest struct {
 	Logo string `json:"logo"`
+}
+
+type TagsUpdateRequest struct {
 	Tags []string `json:"tags"`
 }
 

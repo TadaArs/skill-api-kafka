@@ -15,7 +15,7 @@ func NewProducer() *Producer {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Return.Successes = true
-	producer, err := sarama.NewSyncProducer([]string{os.Getenv("PRODUCER_BROKERS")}, config)
+	producer, err := sarama.NewSyncProducer([]string{os.Getenv("BROKERS")}, config)
 	if err != nil {
 		log.Fatalln(err)
 	}

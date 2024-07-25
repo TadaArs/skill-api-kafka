@@ -24,9 +24,9 @@ type kafkaMsg struct {
 func NewConsumer(topic string, storage SkillStorage) *Consumer {
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
-	config.Consumer.Offsets.Initial = sarama.OffsetOldest
+	config.Consumer.Offsets.Initial = sarama.OffsetNewest
 
-	consumer, err := sarama.NewConsumer([]string{os.Getenv("CONSUMER_BROKERS")}, config)
+	consumer, err := sarama.NewConsumer([]string{os.Getenv("BROKERS")}, config)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -37,7 +37,7 @@ func NewConsumer(topic string, storage SkillStorage) *Consumer {
 
 
 func (c *Consumer) Consume(topic string) error {
-	partitionConsumer, err := c.consumer.ConsumePartition(topic, 0, sarama.OffsetOldest)
+	partitionConsumer, err := c.consumer.ConsumePartition(topic, 0, sarama.OffsetNewest)
 	if err != nil {
 		log.Fatalln(err)
 	}
