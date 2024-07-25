@@ -22,8 +22,8 @@ jobs:
         run: cd api && go mod tidy
       - name: to root
         run: cd ..
-      - name: ls
-        run: ls
+      - name: build docker
+        run: docker compose up -d
       - name: login docker
         run: docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
     #   - name: push image to registry
