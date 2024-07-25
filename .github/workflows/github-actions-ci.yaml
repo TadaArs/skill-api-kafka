@@ -3,7 +3,7 @@ on: [push]
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.event.repository.name }}
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
       - name: login docker
         run: cd .. && docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
       - name: push image to registry
-        run: docker push ${{ env.REGISTRY }}/${{env.IMAGE_NAME}}
+        run: docker push ${{ env.REGISTRY }}/${{secrets.USER}}/${{env.IMAGE_NAME}}
       
         
     
