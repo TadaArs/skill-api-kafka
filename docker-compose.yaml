@@ -3,11 +3,11 @@ services:
     container_name: postgres
     image: postgres:16
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
     ports:
-      - '5432:5432'
+      - 5432:5432
     volumes:
       - ./migrations:/docker-entrypoint-initdb.d/
 
@@ -18,7 +18,7 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_SERVER_ID: 1
     ports:
-      - "2181:2181"
+      - 2181:2181
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -30,7 +30,7 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -41,31 +41,29 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - "kafka"
+      - kafka
     environment:
       KAFKA_CLUSTERS_0_NAME: kafka
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:19092,kafka-2:19093,kafka-3:19094
-      DYNAMIC_CONFIG_ENABLED: 'true'  # not necessary, added for tests
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      DYNAMIC_CONFIG_ENABLED: 'true'
       KAFKA_CLUSTERS_0_AUDIT_TOPICAUDITENABLED: 'true'
       KAFKA_CLUSTERS_0_AUDIT_CONSOLEAUDITENABLED: 'true'
 
-  # api:
-  #   container_name: api
-  #   image: ghcr.io/tadaars/api:latest
-  #   build: 
-  #     context: ./api
-  #     dockerfile: ../api/Dockerfile
-  #   ports:
-  #     - 3300:8976
-  #   depends_on:
-  #     - "kafka"
-  #   restart: always
-  #   environment:
-  #     PORT: ${PORT}
-  #     POSTGRES_USER: ${POSTGRES_USER}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #     POSTGRES_DB: ${POSTGRES_DB}
-  #     DATABASE_URL: ${DATABASE_URL}
-  #     PRODUCER_BROKERS: ${PRODUCER_BROKERS}
-  #     TOPIC: ${TOPIC}
+  api:
+    container_name: api
+    image: ghcr.io/tadaars/skill-api-kafka:latest
+    build: 
+      context: ./api
+      dockerfile: ../api/Dockerfile
+    ports:
+      - 3300:8976
+    depends_on:
+      - kafka
+      - database
+    restart: always
+    environment:
+      PORT: 8976
+      DATABASE_URL: postgresql://postgres:postgres@database:5432/app?sslmode=disable
+      BROKERS: kafka:9092
+      TOPIC: Skills
     
