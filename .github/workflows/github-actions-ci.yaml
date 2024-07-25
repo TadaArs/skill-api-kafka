@@ -1,6 +1,10 @@
 name: github action push package to registry
 on: [push]
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,8 +20,8 @@ jobs:
             go-version: ${{ matrix.go-version }}
       - name: package api init go module
         run: cd api && go mod tidy
-      - name: check docker version
-        run: cd .. && docker version
+      - name: login docker
+        run: cd .. && docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
       
         
     
