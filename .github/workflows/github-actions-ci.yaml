@@ -20,8 +20,10 @@ jobs:
             go-version: ${{ matrix.go-version }}
       - name: package api init go module
         run: cd api && go mod tidy
+      - name: ls package
+        run: cd .. && ls
       - name: login docker
-        run: cd .. && docker compose up -d && docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
+        run: docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
       - name: push image to registry
         run: docker push ${{ env.REGISTRY }}/${{secrets.USER}}/${{env.IMAGE_NAME}}
       
