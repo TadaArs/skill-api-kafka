@@ -1,5 +1,4 @@
 name: github action push package to registry
-run-name: ${{ github.actor }} is testing out GitHub Actions
 on: [push]
 
 jobs:
@@ -17,4 +16,8 @@ jobs:
             go-version: ${{ matrix.go-version }}
       - name: package api init go module
         run: cd api && go mod tidy
+      - name: check docker version
+        run: cd .. && docker version
+      
+        
     
