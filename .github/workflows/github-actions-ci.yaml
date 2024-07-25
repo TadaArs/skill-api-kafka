@@ -18,16 +18,18 @@ jobs:
         uses: actions/setup-go@v5
         with:
             go-version: ${{ matrix.go-version }}
-      - name: package api init go module
-        run: cd api && go mod tidy
-      - name: to root
-        run: cd ..
-      - name: build docker
-        run: docker compose up -d
-      - name: login docker
-        run: docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
-      - name: push image to registry
-        run: docker push ${{ env.REGISTRY }}/${{secrets.USER}}/${{env.IMAGE_NAME}}
+      - name: check docker ver
+        run: docker version
+    #   - name: package api init go module
+    #     run: cd api && go mod tidy
+    #   - name: to root
+    #     run: cd ..
+    #   - name: build docker
+    #     run: docker compose up -d
+    #   - name: login docker
+    #     run: docker login --username ${{ github.actor }} --password ${{ secrets.TOKEN }} ${{ env.REGISTRY }}
+    #   - name: push image to registry
+    #     run: docker push ${{ env.REGISTRY }}/${{secrets.USER}}/${{env.IMAGE_NAME}}
       
         
     
